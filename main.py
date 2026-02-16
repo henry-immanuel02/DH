@@ -1,5 +1,7 @@
 import streamlit as st
 import random
+import base64
+import os
 
 # ==============================
 # PAGE CONFIG
@@ -53,7 +55,7 @@ starter = st.session_state.starter
 starter_info = pokemon_data[starter]
 
 # ==============================
-# GLOBAL STYLE (STABLE CARD)
+# STYLE
 # ==============================
 st.markdown("""
 <style>
@@ -66,11 +68,10 @@ html, body, [class*="css"] {
     background: linear-gradient(135deg, #f8fbff 0%, #eaf2fb 100%);
 }
 
-/* Main Card Container */
 .block-container {
     max-width: 900px;
     margin: 70px auto;
-    background: rgba(255,255,255,0.90);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(14px);
     padding: 70px 60px;
     border-radius: 28px;
@@ -91,19 +92,16 @@ html, body, [class*="css"] {
     font-size: 19px;
     color: #6b7a90;
     text-align:center;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
 }
 
 /* HP BAR */
-.hp-container {
-    margin: 25px 0 35px 0;
-}
-
 .hp-bar {
     height: 22px;
     border-radius: 12px;
     background-color: #e4e9f2;
     overflow: hidden;
+    margin-bottom: 35px;
 }
 
 .hp-fill {
@@ -144,12 +142,9 @@ if not st.session_state.answered_yes:
     <div class="subtitle-text">Would you like to be my Valentine?</div>
     """, unsafe_allow_html=True)
 
-    # HP BAR
     st.markdown(f"""
-    <div class="hp-container">
-        <div class="hp-bar">
-            <div class="hp-fill" style="width:{hp_remaining}%"></div>
-        </div>
+    <div class="hp-bar">
+        <div class="hp-fill" style="width:{hp_remaining}%"></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -197,7 +192,7 @@ else:
 
     st.markdown(f"""
     <div class="subtitle-text">
-        Congratulations! It evolved into {starter_info['evolve_name']} 💙
+        It evolved into {starter_info['evolve_name']} 💙
     </div>
     """, unsafe_allow_html=True)
 
@@ -205,9 +200,41 @@ else:
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
+    # ==============================
+    # GIFT SECTION (PHOTO)
+    # ==============================
+    if st.button("Open Your Special Gift 🎁"):
+
+        image_path = "valentine_photo.jpg"  # GANTI kalau beda nama
+
+        if os.path.exists(image_path):
+            with open(image_path, "rb") as f:
+                img_bytes = f.read()
+                encoded = base64.b64encode(img_bytes).decode()
+
+            st.markdown(f"""
+            <div style="
+                display:flex;
+                justify-content:center;
+                margin-top:40px;
+            ">
+                <img src="data:image/jpeg;base64,{encoded}"
+                    style="
+                        width:600px;
+                        border-radius:20px;
+                        box-shadow:0 20px 50px rgba(0,0,0,0.15);
+                    ">
+            </div>
+            """, unsafe_allow_html=True)
+
+        else:
+            st.warning("Photo file not found. Make sure it's in the same folder.")
+
+    st.markdown("<hr>", unsafe_allow_html=True)
+
     st.markdown(f"""
     <div style="text-align:center;">
-        <img src="{legendary_data[legend_name]}" width="260">
+        <img src="{legendary_data[legend_name]}" width="240">
     </div>
     """, unsafe_allow_html=True)
 
@@ -216,8 +243,6 @@ else:
         Legendary Blessing Activated: {legend_name} ✨
     </div>
     """, unsafe_allow_html=True)
-
-    st.success("You unlocked the rarest item: Lifetime Commitment Badge.")
 
     if st.button("Reset Game"):
         st.session_state.answered_yes = False
