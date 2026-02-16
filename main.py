@@ -205,7 +205,7 @@ else:
     # ==============================
     if st.button("Open Your Special Gift 🎁"):
 
-        image_path = "valentine_photo.jpg"  # GANTI kalau beda nama
+        image_path = "WhatsApp Image 2026-02-14 at 17.19.42.jpeg"  # GANTI kalau beda nama
 
         if os.path.exists(image_path):
             with open(image_path, "rb") as f:
